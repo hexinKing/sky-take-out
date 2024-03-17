@@ -2,9 +2,11 @@ package com.sky.mapper;
 
 import com.github.pagehelper.Page;
 import com.sky.dto.EmployeePageQueryDTO;
+import com.sky.dto.PasswordEditDTO;
 import com.sky.entity.Employee;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 @Mapper
 public interface EmployeeMapper {
@@ -30,4 +32,27 @@ public interface EmployeeMapper {
      * @return
      */
     Page<Employee> EmployeePageQuery(EmployeePageQueryDTO employeePageQueryDTO);
+
+
+    /**
+     * 更新，启用、禁用员工账号
+     * @param employee
+     */
+    void StartOrStop(Employee employee);
+
+    /**
+     * 根据id查询员工
+     * @param id
+     * @return
+     */
+    @Select("select * from employee where id=#{id}")
+    Employee getById(Long id);
+
+    /**
+     * 修改员工密码
+     * @param passwordEditDTO
+     */
+    @Update("update employee set password=#{newPassword} where id=#{empId}")
+    void changePass(PasswordEditDTO passwordEditDTO);
+
 }

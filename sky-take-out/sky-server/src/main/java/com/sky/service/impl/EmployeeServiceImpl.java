@@ -9,6 +9,7 @@ import com.sky.context.BaseContext;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
 import com.sky.dto.EmployeePageQueryDTO;
+import com.sky.dto.PasswordEditDTO;
 import com.sky.entity.Employee;
 import com.sky.exception.AccountLockedException;
 import com.sky.exception.AccountNotFoundException;
@@ -16,14 +17,17 @@ import com.sky.exception.PasswordErrorException;
 import com.sky.mapper.EmployeeMapper;
 import com.sky.result.PageResult;
 import com.sky.service.EmployeeService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
 
@@ -44,7 +48,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = employeeMapper.getByUsername(username);
 
         //2、处理各种异常情况（用户名不存在、密码不对、账号被锁定）
-        if (employee == null) {
+        if (employee == null ) {
             //账号不存在
             throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);
         }
@@ -114,5 +118,84 @@ public class EmployeeServiceImpl implements EmployeeService {
         //放回结果
         return pageResult;
     }
+
+
+    /**
+     * 更新,启用、禁用员工账号
+     * @param status
+     * @param id
+     */
+    @Override
+    public void StartOrStop(Integer status, Long id) {
+//        对数据进行封装Employee
+        Employee employee = new Employee();
+//        更新修改时间
+        employee.setUpdateTime(LocalDateTime.now());
+        employee.setId(id);
+        employee.setStatus(status);
+
+        employeeMapper.StartOrStop(employee);
+    }
+
+
+    /**
+     * 根据id查询员工
+     * @param id
+     * @return
+     */
+    @Override
+    public Employee getById(Long id) {
+        Employee employee = employeeMapper.getById(id);
+        //        对密码进行特殊处理
+        employee.setPassword("*****");
+        return employee;
+    }
+
+    /**
+     * 编辑员工数据
+     * @param employeeDTO
+     */
+    @Override
+    public void updateEmp(EmployeeDTO employeeDTO) {
+        Employee employee = new Employee();
+//       属性对象拷贝
+        BeanUtils.copyProperties(employeeDTO,employee);
+//        更新修改时间
+        employee.setUpdateTime(LocalDateTime.now());
+//        从threadLocal中获取当前操作的员工ID
+        Long empID = BaseContext.getCurrentId();
+//        更新设置最后修改人id
+        employee.setUpdateUser(empID);
+
+        employeeMapper.StartOrStop(employee);
+    }
+
+
+    /**
+     * 修改员工密码
+     * @param passwordEditDTO
+     */
+    @Override
+    @Transactional(rollbackFor=Exception.class)//添加事务管理
+    public void changePass(PasswordEditDTO passwordEditDTO) {
+//        获取数据库中的密码并进行对比
+        Employee employee = employeeMapper.getById(passwordEditDTO.getEmpId());
+        String password = employee.getPassword();
+        log.info("数据库中的密码为：{}",password );
+//        对用户输入的旧密码进行md5加密
+        String OldPassword = DigestUtils.md5DigestAsHex(passwordEditDTO.getOldPassword().getBytes());
+        log.info("用户输入的旧密码为：{}",OldPassword );
+//            当用户输入的密码等于数据库中的密码时，才执行密码更新
+        if (OldPassword.equals(password)){
+//          再对新密码进行md5加密
+            String NewPassword = DigestUtils.md5DigestAsHex(passwordEditDTO.getNewPassword().getBytes());
+            passwordEditDTO.setNewPassword(NewPassword);
+            log.info("用户输入的新密码为：{}",NewPassword );
+            employeeMapper.changePass(passwordEditDTO);
+        }
+
+
+    }
+
 
 }
