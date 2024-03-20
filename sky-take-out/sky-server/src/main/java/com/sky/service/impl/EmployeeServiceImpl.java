@@ -21,7 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 
 import java.time.LocalDateTime;
@@ -131,6 +130,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = new Employee();
 //        更新修改时间
         employee.setUpdateTime(LocalDateTime.now());
+//        更新更改人id
         employee.setId(id);
         employee.setStatus(status);
 
@@ -176,8 +176,7 @@ public class EmployeeServiceImpl implements EmployeeService {
      * @param passwordEditDTO
      */
     @Override
-    @Transactional(rollbackFor=Exception.class)//添加事务管理
-    public void changePass(PasswordEditDTO passwordEditDTO) {
+    public void changePassword(PasswordEditDTO passwordEditDTO) {
 //        获取数据库中的密码并进行对比
         Employee employee = employeeMapper.getById(passwordEditDTO.getEmpId());
         String password = employee.getPassword();
@@ -189,9 +188,17 @@ public class EmployeeServiceImpl implements EmployeeService {
         if (OldPassword.equals(password)){
 //          再对新密码进行md5加密
             String NewPassword = DigestUtils.md5DigestAsHex(passwordEditDTO.getNewPassword().getBytes());
-            passwordEditDTO.setNewPassword(NewPassword);
+
+//            对新密码进行封装，同时更新修改时间和记录修改人id
+            employee.setPassword(NewPassword);
+            employee.setUpdateTime(LocalDateTime.now());
+//        从threadLocal中获取当前操作的员工ID
+            Long empID = BaseContext.getCurrentId();
+//        更新设置最后修改人id
+            employee.setUpdateUser(empID);
             log.info("用户输入的新密码为：{}",NewPassword );
-            employeeMapper.changePass(passwordEditDTO);
+
+            employeeMapper.StartOrStop(employee);
         }
 
 
