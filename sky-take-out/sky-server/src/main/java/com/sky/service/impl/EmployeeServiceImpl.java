@@ -5,7 +5,6 @@ import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
 import com.sky.constant.PasswordConstant;
 import com.sky.constant.StatusConstant;
-import com.sky.context.BaseContext;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
 import com.sky.dto.EmployeePageQueryDTO;
@@ -23,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -86,14 +84,14 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setPassword(password);
 //        设置默认账号状态
         employee.setStatus(StatusConstant.ENABLE);
-//        设置创建时间和最后修改时间
-        employee.setCreateTime(LocalDateTime.now());
-        employee.setUpdateTime(LocalDateTime.now());
-//        从threadLocal中获取当前操作的员工ID
-        Long empID = BaseContext.getCurrentId();
-//        设置创建人id和最后修改人id
-        employee.setCreateUser(empID);
-        employee.setUpdateUser(empID);
+////        设置创建时间和最后修改时间
+//        employee.setCreateTime(LocalDateTime.now());
+//        employee.setUpdateTime(LocalDateTime.now());
+////        从threadLocal中获取当前操作的员工ID
+//        Long empID = BaseContext.getCurrentId();
+////        设置创建人id和最后修改人id
+//        employee.setCreateUser(empID);
+//        employee.setUpdateUser(empID);
 
         employeeMapper.AddEmployee(employee);
     }
@@ -128,11 +126,13 @@ public class EmployeeServiceImpl implements EmployeeService {
     public void StartOrStop(Integer status, Long id) {
 //        对数据进行封装Employee
         Employee employee = new Employee();
-//        更新修改时间
-        employee.setUpdateTime(LocalDateTime.now());
-//        更新更改人id
-        employee.setId(id);
         employee.setStatus(status);
+        employee.setId(id);
+////        更新修改时间
+//        employee.setUpdateTime(LocalDateTime.now());
+////        更新更改人id
+//        employee.setId(id);
+//        employee.setStatus(status);
 
         employeeMapper.StartOrStop(employee);
     }
@@ -160,12 +160,12 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = new Employee();
 //       属性对象拷贝
         BeanUtils.copyProperties(employeeDTO,employee);
-//        更新修改时间
-        employee.setUpdateTime(LocalDateTime.now());
-//        从threadLocal中获取当前操作的员工ID
-        Long empID = BaseContext.getCurrentId();
-//        更新设置最后修改人id
-        employee.setUpdateUser(empID);
+////        更新修改时间
+//        employee.setUpdateTime(LocalDateTime.now());
+////        从threadLocal中获取当前操作的员工ID
+//        Long empID = BaseContext.getCurrentId();
+////        更新设置最后修改人id
+//        employee.setUpdateUser(empID);
 
         employeeMapper.StartOrStop(employee);
     }
@@ -191,11 +191,11 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 //            对新密码进行封装，同时更新修改时间和记录修改人id
             employee.setPassword(NewPassword);
-            employee.setUpdateTime(LocalDateTime.now());
-//        从threadLocal中获取当前操作的员工ID
-            Long empID = BaseContext.getCurrentId();
-//        更新设置最后修改人id
-            employee.setUpdateUser(empID);
+//            employee.setUpdateTime(LocalDateTime.now());
+////        从threadLocal中获取当前操作的员工ID
+//            Long empID = BaseContext.getCurrentId();
+////        更新设置最后修改人id
+//            employee.setUpdateUser(empID);
             log.info("用户输入的新密码为：{}",NewPassword );
 
             employeeMapper.StartOrStop(employee);
