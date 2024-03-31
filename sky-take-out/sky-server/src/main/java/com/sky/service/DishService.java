@@ -1,5 +1,6 @@
 package com.sky.service;
 
+import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
 import com.sky.entity.Dish;
 import com.sky.result.PageResult;
@@ -18,9 +19,9 @@ public interface DishService {
 
     /**
      * 新增菜品
-     * @param dishVO
+     * @param dishDTO
      */
-    void AddDish(DishVO dishVO);
+    void AddDish(DishDTO dishDTO);
 
     /**
      * 根据id查询
@@ -52,8 +53,8 @@ public interface DishService {
 
     /**
      * 修改菜品
-     * @param dishVO
+     * @param dishDTO
      * @return
      */
-    void UpdateDish(DishVO dishVO);
+    void UpdateDish(DishDTO dishDTO);
 }

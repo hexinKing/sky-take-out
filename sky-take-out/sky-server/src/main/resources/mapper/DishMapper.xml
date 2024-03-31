@@ -3,13 +3,13 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.sky.mapper.DishMapper">
-    <insert id="AddDish">
+    <insert id="AddDish" useGeneratedKeys="true" keyProperty="id">
     INSERT INTO dish (name, category_id, price, image, description, status, create_time, update_time, create_user, update_user)
     VALUES (#{name},#{categoryId},#{price},#{image},#{description},#{status},#{createTime},#{updateTime},#{createUser},#{updateUser})
 
     </insert>
 
-    <update id="StartOrStop">
+    <update id="StartOrStop" useGeneratedKeys="true" keyProperty="id">
         UPDATE dish
         <set>
             <if test="categoryId!=null ">
@@ -53,33 +53,35 @@
         </foreach>
     </delete>
 
-    <select id="DishPageQuery" resultType="com.sky.entity.Dish">
-        select *
-        from dish
+
+<!--    <select id="ListDish" resultType="com.sky.entity.Dish">-->
+<!--        select d.* , c.name as categoryName-->
+<!--        from dish d left join category c on d.category_id = c.id-->
+<!--        where d.id= #{id}-->
+<!--    </select>-->
+
+    <select id="DishPageQuery" resultType="com.sky.vo.DishVO">
+        select d.* , c.name as categoryName
+        from dish d left join category c on d.category_id = c.id
         <where>
             <if test="name != null and name != ''">
-                name like concat('%',#{name},'%')
+                and d.name like concat('%',#{name},'%')
             </if>
             <if test="categoryId != null">
-                and category_id=#{categoryId}
+                and d.category_id=#{categoryId}
             </if>
             <if test="status != null">
-                and status=#{status}
+                and d.status=#{status}
             </if>
         </where>
-        order by update_time desc
+        order by d.update_time desc
     </select>
 
-    <select id="ListDish" resultType="com.sky.entity.Dish">
-        select * from dish
-        <where>
-            <if test="categoryId!=null">
-                category_id= #{categoryId}
-            </if>
-            <if test="id!=null">
-                and id= #{id}
-            </if>
-        </where>
+    <select id="ListDishIds" resultType="com.sky.entity.Dish">
+        select * from dish where id in
+        <foreach collection="ids" item="id" separator="," close=")" open="(">
+            #{id}
+        </foreach>
     </select>
 
 </mapper>

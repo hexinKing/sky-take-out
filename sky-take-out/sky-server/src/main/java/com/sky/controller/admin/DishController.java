@@ -1,6 +1,7 @@
 package com.sky.controller.admin;
 
 
+import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
 import com.sky.entity.Dish;
 import com.sky.result.PageResult;
@@ -36,7 +37,7 @@ public class DishController {
      */
     @GetMapping("/page")
     @ApiOperation(value = "菜品分页管理")
-    public Result<PageResult>  DishPageQuery(DishPageQueryDTO dishPageQueryDTO){
+    public Result<PageResult>  DishPageQuery( DishPageQueryDTO dishPageQueryDTO){
          PageResult pageResult = dishService.DishPageQuery(dishPageQueryDTO);
         return Result.success(pageResult);
     }
@@ -44,13 +45,13 @@ public class DishController {
 
     /**
      * 新增菜品
-     * @param dishVO
+     * @param dishDTO
      * @return
      */
     @PostMapping
     @ApiOperation(value = "新增菜品")
-    public Result AddDish(DishVO dishVO){
-        dishService.AddDish(dishVO);
+    public Result AddDish(@RequestBody DishDTO dishDTO){
+        dishService.AddDish(dishDTO);
         return Result.success();
     }
 
@@ -106,13 +107,13 @@ public class DishController {
 
     /**
      * 修改菜品
-     * @param dishVO
+     * @param dishDTO
      * @return
      */
     @PutMapping
     @ApiOperation(value = "修改菜品")
-    public Result UpdateDish(@RequestBody DishVO dishVO){
-        dishService.UpdateDish(dishVO);
+    public Result UpdateDish(@RequestBody DishDTO dishDTO){
+        dishService.UpdateDish(dishDTO);
         return Result.success();
     }
 
