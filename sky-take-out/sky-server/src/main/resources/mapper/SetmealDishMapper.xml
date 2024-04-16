@@ -4,6 +4,36 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.sky.mapper.SetmealDishMapper">
 
+    <insert id="AddsetmealDish">
+        INSERT INTO setmeal_dish (setmeal_id, dish_id, name, price, copies) VALUES
+        <foreach collection="setmealDishes" item="setmeal" separator=",">
+            (#{setmeal.setmealId},#{setmeal.dishId},#{setmeal.name},#{setmeal.price},#{setmeal.copies})
+        </foreach>
+
+    </insert>
+
+    <update id="UpdateSetmealDish">
+        UPDATE setmeal_dish
+        <set>
+            <if test="categoryId!=null ">
+                setmeal_id=#{setmealId},
+            </if>
+            <if test="price!=null ">
+                dish_id=#{dishId},
+            </if>
+            <if test="status!=null ">
+                price=#{price},
+            </if>
+            <if test="image!=null ">
+                copies=#{copies},
+            </if>
+            <if test="name!=null and name!=''">
+                name=#{name},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
     <select id="ListSetmealDish" resultType="com.sky.entity.SetmealDish">
         select * from setmeal_dish where id in
         <foreach collection="ids" item="id" separator="," close=")" open="(">
