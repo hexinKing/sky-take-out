@@ -17,7 +17,7 @@ public interface DishFlavorMapper {
     void AddDish_flavor(List<DishFlavor> dishFlavor);
 
     /**
-     * 根据id查询
+     * 根据菜品id查询菜品口味
      * @param id
      * @return
      */

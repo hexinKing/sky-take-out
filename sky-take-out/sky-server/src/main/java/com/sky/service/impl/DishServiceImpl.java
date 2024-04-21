@@ -1,5 +1,6 @@
 package com.sky.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
@@ -16,6 +17,7 @@ import com.sky.mapper.SetmealDishMapper;
 import com.sky.result.PageResult;
 import com.sky.service.DishService;
 import com.sky.vo.DishVO;
+import com.sky.vo.SetmealVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,7 +89,7 @@ public class DishServiceImpl  implements DishService {
     }
 
     /**
-     * 根据id查询
+     * 根据菜品id查询菜品及口味
      * @param id
      * @return
      */
@@ -109,14 +111,28 @@ public class DishServiceImpl  implements DishService {
     }
 
     /**
-     * 根据分类id查询
+     * 根据分类id查询菜品以及菜品口味
      * @param categoryId
      * @return
      */
     @Override
-    public List<Dish> ListDish(Long categoryId) {
-        List<Dish> dishes= dishMapper.catId(categoryId);
-        return dishes;
+    public List<DishVO> ListDish(Long categoryId) {
+//       对数据进行封装
+        List<DishVO> dishVOS ;
+//        查询菜品信息
+        List<Dish> dishes = dishMapper.catId(categoryId);
+        log.info("根据分类id查询菜品信息:{}",dishes);
+//       对菜品表进行拷贝(fastjson 序列化反序列化方法（深拷贝）)
+        dishVOS= JSONObject.parseArray(JSONObject.toJSONString(dishes), DishVO.class);
+//       查询菜品口味信息
+        for (DishVO dishVO : dishVOS) {
+            List<DishFlavor> dishFlavors = dishFlavorMapper.getById(dishVO.getId());
+            log.info("根据菜品id查询菜品口味信息:{}",dishFlavors);
+            dishVO.setFlavors(dishFlavors);
+        }
+        log.info("根菜品及口味信息:{}",dishVOS);
+
+        return dishVOS;
     }
 
     /**
@@ -192,6 +208,18 @@ public class DishServiceImpl  implements DishService {
             dishFlavorMapper.AddDish_flavor(flavors);
         }
 
+    }
+
+
+    /**
+     * 根据分类id查询套餐
+     * @param categoryId
+     * @return
+     */
+    @Override
+    public List<SetmealVO> ListSetmeal(Long categoryId) {
+        List<SetmealVO> setmealVOS = dishMapper.ListSetmeal(categoryId);
+        return setmealVOS;
     }
 
 

@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * 设置店铺营业状态
+ */
 @RestController("adminShopController")
 @RequestMapping("/admin/shop")
 @Api(tags = "店铺操作接口")

@@ -6,6 +6,7 @@ import com.sky.dto.DishPageQueryDTO;
 import com.sky.entity.Dish;
 import com.sky.enumeration.OperationType;
 import com.sky.vo.DishVO;
+import com.sky.vo.SetmealVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -73,4 +74,12 @@ public interface DishMapper {
      * @return
      */
     List<Dish> ListDishIds(Long[] ids);
+
+    /**
+     * 根据分类id查询套餐
+     * @param categoryId
+     * @return
+     */
+    @Select("Select * from dish where category_id=#{categoryId}")
+    List<SetmealVO> ListSetmeal(Long categoryId);
 }

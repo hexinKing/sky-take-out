@@ -125,7 +125,6 @@ public class CategoryServiceImpl implements CategoryService {
     public List<Category> listCategory(Integer type) {
         Category category = new Category();
         category.setType(type);
-//        category.setId(null);
         List<Category> List = categoryMapper.listCategory(category);
         return List;
     }

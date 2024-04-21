@@ -2,9 +2,9 @@ package com.sky.service;
 
 import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
-import com.sky.entity.Dish;
 import com.sky.result.PageResult;
 import com.sky.vo.DishVO;
+import com.sky.vo.SetmealVO;
 
 import java.util.List;
 
@@ -24,18 +24,18 @@ public interface DishService {
     void AddDish(DishDTO dishDTO);
 
     /**
-     * 根据id查询
+     * 根据菜品id查询菜品及口味
      * @param id
      * @return
      */
     DishVO getById(Long id);
 
     /**
-     * 根据分类id查询
+     * 根据分类id查询以及菜品口味
      * @param categoryId
      * @return
      */
-    List<Dish> ListDish(Long categoryId);
+    List<DishVO> ListDish(Long categoryId);
 
     /**
      * 菜品起售、停售
@@ -57,4 +57,11 @@ public interface DishService {
      * @return
      */
     void UpdateDish(DishDTO dishDTO);
+
+    /**
+     * 根据分类id查询套餐
+     * @param categoryId
+     * @return
+     */
+    List<SetmealVO> ListSetmeal(Long categoryId);
 }
