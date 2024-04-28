@@ -17,11 +17,11 @@ import com.sky.mapper.SetmealDishMapper;
 import com.sky.result.PageResult;
 import com.sky.service.DishService;
 import com.sky.vo.DishVO;
-import com.sky.vo.SetmealVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -65,6 +65,7 @@ public class DishServiceImpl  implements DishService {
      * @param dishDTO
      */
     @Override
+    @Transactional
     public void AddDish(DishDTO dishDTO) {
 //        对DishVO进行数据拷贝
         Dish dish = new Dish();
@@ -119,16 +120,17 @@ public class DishServiceImpl  implements DishService {
     public List<DishVO> ListDish(Long categoryId) {
 //       对数据进行封装
         List<DishVO> dishVOS ;
-//        查询菜品信息
-        List<Dish> dishes = dishMapper.catId(categoryId);
+//        查询菜品信息 ,只查询起售中的菜品
+        Integer status = StatusConstant.ENABLE;
+        List<Dish> dishes = dishMapper.catId(categoryId,status);
         log.info("根据分类id查询菜品信息:{}",dishes);
 //       对菜品表进行拷贝(fastjson 序列化反序列化方法（深拷贝）)
         dishVOS= JSONObject.parseArray(JSONObject.toJSONString(dishes), DishVO.class);
 //       查询菜品口味信息
-        for (DishVO dishVO : dishVOS) {
-            List<DishFlavor> dishFlavors = dishFlavorMapper.getById(dishVO.getId());
-            log.info("根据菜品id查询菜品口味信息:{}",dishFlavors);
-            dishVO.setFlavors(dishFlavors);
+            for (DishVO dishVO : dishVOS) {
+                List<DishFlavor> dishFlavors = dishFlavorMapper.getById(dishVO.getId());
+//            log.info("根据菜品id查询菜品口味信息:{}",dishFlavors);
+                dishVO.setFlavors(dishFlavors);
         }
         log.info("根菜品及口味信息:{}",dishVOS);
 
@@ -154,6 +156,7 @@ public class DishServiceImpl  implements DishService {
      * @param ids
      * @return
      */
+    @Transactional
     @Override
     public void DeleteDish(Long[] ids) {
 
@@ -186,6 +189,7 @@ public class DishServiceImpl  implements DishService {
      * @param dishDTO
      * @return
      */
+    @Transactional
     @Override
     public void UpdateDish(DishDTO dishDTO) {
 //        修改菜品表
@@ -209,18 +213,5 @@ public class DishServiceImpl  implements DishService {
         }
 
     }
-
-
-    /**
-     * 根据分类id查询套餐
-     * @param categoryId
-     * @return
-     */
-    @Override
-    public List<SetmealVO> ListSetmeal(Long categoryId) {
-        List<SetmealVO> setmealVOS = dishMapper.ListSetmeal(categoryId);
-        return setmealVOS;
-    }
-
 
 }

@@ -58,4 +58,12 @@ public interface SetmealMapper {
      * @return
      */
     void DeleteSetmeal(List<Long> ids);
+
+    /**
+     * 根据分类id查询套餐
+     * @param setmeal
+     * @return
+     */
+    @Select("Select * from setmeal where category_id=#{categoryId} and status=#{status}")
+    List<SetmealVO> ListSetmeal(Setmeal setmeal);
 }

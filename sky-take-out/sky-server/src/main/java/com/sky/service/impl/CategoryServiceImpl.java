@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -66,14 +67,6 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = new Category();
 //        进行属性对象拷贝
         BeanUtils.copyProperties(categoryDTO,category);
-////        设置创建人的id和修改人的id
-//        Long id = BaseContext.getCurrentId();
-//        category.setCreateUser(id);
-//        category.setUpdateUser(id);
-////        设置创建时间和更新时间
-//        category.setCreateTime(LocalDateTime.now());
-//        category.setUpdateTime(LocalDateTime.now());
-//        设置状态默认为0（禁用）
         category.setStatus(StatusConstant.DISABLE);
 
         categoryMapper.addCategory(category);
@@ -91,10 +84,6 @@ public class CategoryServiceImpl implements CategoryService {
 //        对数据进行封装
         category.setStatus(status);
         category.setId(id);
-//        category.setUpdateTime(LocalDateTime.now());
-//        Long currentId = BaseContext.getCurrentId();
-//        category.setUpdateUser(currentId);
-
         categoryMapper.StartOrStop(category);
     }
 
@@ -108,11 +97,6 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = new Category();
 //        进行属性对象拷贝
         BeanUtils.copyProperties(categoryDTO,category);
-
-//        category.setUpdateTime(LocalDateTime.now());
-//        Long id = BaseContext.getCurrentId();
-//        category.setUpdateUser(id);
-
         categoryMapper.StartOrStop(category);
     }
 
@@ -134,6 +118,7 @@ public class CategoryServiceImpl implements CategoryService {
      * @param id
      */
     @Override
+    @Transactional
     public void DeleteCategory(Long id) {
 //        需要判断该分类下是否还有产品， “分类下有产品不可删除”；
 //        1.判断该id对应的分类类型

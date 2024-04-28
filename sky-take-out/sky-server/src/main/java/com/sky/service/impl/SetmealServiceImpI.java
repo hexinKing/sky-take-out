@@ -1,5 +1,6 @@
 package com.sky.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
@@ -9,7 +10,7 @@ import com.sky.dto.SetmealPageQueryDTO;
 import com.sky.entity.Dish;
 import com.sky.entity.Setmeal;
 import com.sky.entity.SetmealDish;
-import com.sky.exception.BaseException;
+import com.sky.exception.DeletionNotAllowedException;
 import com.sky.exception.SetmealEnableFailedException;
 import com.sky.mapper.DishMapper;
 import com.sky.mapper.SetmealDishMapper;
@@ -22,8 +23,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -41,6 +42,7 @@ public class SetmealServiceImpI implements SetmealService {
      * 新增套餐
      * @param setmealDTO
      */
+    @Transactional
     @Override
     public void AddSetmeal(SetmealDTO setmealDTO) {
 //        对setmealDTO进行数据拷贝
@@ -127,16 +129,17 @@ public class SetmealServiceImpI implements SetmealService {
      * @return
      */
     @Override
+    @Transactional
     public void UpdateSetmeal(SetmealDTO setmealDTO) {
 //        修改套餐数据
         Setmeal setmeal = new Setmeal();
         BeanUtils.copyProperties(setmealDTO,setmeal);
         log.info("套餐数据:{}",setmeal);
 
-        //        起售
+//        起售
         if (setmealDTO.getStatus()== StatusConstant.ENABLE) {
-            //        套餐内如果有停售菜品，则套餐无法上架
-//        查询套餐菜品表查询所有数据，用菜品ID查看该菜品是否停售
+//        套餐内如果有停售菜品，则套餐无法上架
+//        查询套餐菜品表查询所有数据，用套餐id查看该菜品是否停售
             List<SetmealDish> setmealDishList = setmealDishMapper.getById(setmealDTO.getId());
             for (SetmealDish setmealDish : setmealDishList) {
                 Dish dish = dishMapper.ListDish(setmealDish.getDishId());
@@ -152,7 +155,6 @@ public class SetmealServiceImpI implements SetmealService {
         if (setmealDTO.getSetmealDishes()!=null && setmealDTO.getSetmealDishes().size()>0) {
             //        修改套餐菜品数据
             for (SetmealDish setmealDish : setmealDTO.getSetmealDishes()) {
-//                setmealDish.setSetmealId(setmealDTO.getId());
                 log.info("套餐菜品数据:{}",setmealDish);
                 setmealDishMapper.UpdateSetmealDish(setmealDish);
             }
@@ -173,7 +175,7 @@ public class SetmealServiceImpI implements SetmealService {
             Setmeal setmeal = setmealMapper.getById(id);
             if (setmeal.getStatus()==StatusConstant.ENABLE){
 //                抛出异常，起售中的套餐不能删除
-                throw new BaseException(MessageConstant.SETMEAL_ON_SALE);
+                throw new DeletionNotAllowedException(MessageConstant.SETMEAL_ON_SALE);
             }
         }
 //        删除套餐
@@ -188,11 +190,26 @@ public class SetmealServiceImpI implements SetmealService {
     @Override
     public List<DishItemVO> getSetmealId(Long id) {
         List<SetmealDish> setmealDishes = setmealDishMapper.getById(id);
-        List<DishItemVO> dishItemVOS = new ArrayList<>();
-        //        对数据进行封装
-        BeanUtils.copyProperties(setmealDishes,dishItemVOS);
+        //        对数据进行封装，序列化反序列化方法
+        List<DishItemVO> dishItemVOS = JSONObject.parseArray(JSONObject.toJSONString(setmealDishes), DishItemVO.class);
         log.info("根据套餐id查询包含的菜品数据：{}",dishItemVOS);
         return dishItemVOS;
+    }
+
+
+    /**
+     * 根据分类id查询套餐
+     * @param categoryId
+     * @return
+     */
+    @Override
+    public List<SetmealVO> ListSetmeal(Long categoryId) {
+        Setmeal setmeal = new Setmeal();
+        setmeal.setCategoryId(categoryId);
+//        只查询起售状态下的套餐
+        setmeal.setStatus(StatusConstant.ENABLE);
+        List<SetmealVO> setmealVOS = setmealMapper.ListSetmeal(setmeal);
+        return setmealVOS;
     }
 
 

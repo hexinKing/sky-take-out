@@ -4,7 +4,6 @@ import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
 import com.sky.result.PageResult;
 import com.sky.vo.DishVO;
-import com.sky.vo.SetmealVO;
 
 import java.util.List;
 
@@ -58,10 +57,4 @@ public interface DishService {
      */
     void UpdateDish(DishDTO dishDTO);
 
-    /**
-     * 根据分类id查询套餐
-     * @param categoryId
-     * @return
-     */
-    List<SetmealVO> ListSetmeal(Long categoryId);
 }

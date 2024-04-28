@@ -11,6 +11,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -34,6 +35,7 @@ public class SetmealController {
      */
     @PostMapping
     @ApiOperation("新增套餐")
+    @CacheEvict(cacheNames = "userCategoryIdSetmeal" , key = "#setmealDTO.categoryId")
     public Result AddSetmeal(@RequestBody SetmealDTO setmealDTO){
         setmealService.AddSetmeal(setmealDTO);
         return Result.success();
@@ -72,6 +74,7 @@ public class SetmealController {
      */
     @PostMapping("/status/{status}")
     @ApiOperation("套餐起售、停售")
+    @CacheEvict(cacheNames = "userCategoryIdSetmeal" , allEntries = true)
     public Result StartOrStop(@PathVariable Integer status ,Long id){
         setmealService.StartOrStop(status,id);
         return Result.success();
@@ -84,7 +87,8 @@ public class SetmealController {
      */
     @PutMapping
     @ApiOperation("修改套餐")
-    public Result UpdateSetmeal(SetmealDTO setmealDTO){
+    @CacheEvict(cacheNames = "userCategoryIdSetmeal" , allEntries = true)
+    public Result UpdateSetmeal(@RequestBody SetmealDTO setmealDTO){
         setmealService.UpdateSetmeal(setmealDTO);
         return Result.success();
     }
@@ -96,7 +100,9 @@ public class SetmealController {
      */
     @DeleteMapping
     @ApiOperation("批量删除套餐")
-    public Result DeleteSetmeal(List<Long> ids){
+//    因为删除套餐必须在停售的状态下，而用户端只展示起售的套餐，同时起售停售回清除Redis中的缓存
+//    @CacheEvict(cacheNames = "userCategoryIdSetmeal" , allEntries = true)
+    public Result DeleteSetmeal(@RequestParam List<Long> ids){
         setmealService.DeleteSetmeal(ids);
         return Result.success();
     }

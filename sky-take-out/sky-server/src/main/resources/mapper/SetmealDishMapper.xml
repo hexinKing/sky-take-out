@@ -15,23 +15,17 @@
     <update id="UpdateSetmealDish">
         UPDATE setmeal_dish
         <set>
-            <if test="categoryId!=null ">
-                setmeal_id=#{setmealId},
-            </if>
             <if test="price!=null ">
-                dish_id=#{dishId},
-            </if>
-            <if test="status!=null ">
                 price=#{price},
             </if>
-            <if test="image!=null ">
+            <if test="copies!=null ">
                 copies=#{copies},
             </if>
             <if test="name!=null and name!=''">
                 name=#{name},
             </if>
         </set>
-        where id=#{id}
+        where dish_id=#{dishId}
     </update>
 
     <select id="ListSetmealDish" resultType="com.sky.entity.SetmealDish">
@@ -40,4 +34,17 @@
             #{id}
         </foreach>
     </select>
+
+    <select id="getDishIdSetmealId" resultType="com.sky.entity.SetmealDish">
+        select * from setmeal_dish
+        <where>
+            <if test="dishId!=null">
+                and dish_id=#{dishId}
+            </if>
+            <if test="setmealId!=null">
+                and setmeal_id=#{setmealId}
+            </if>
+        </where>
+    </select>
+
 </mapper>
