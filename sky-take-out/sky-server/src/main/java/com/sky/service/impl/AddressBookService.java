@@ -98,9 +98,7 @@ public class AddressBookService implements AddressBookServiceImpl {
      */
     @Override
     public AddressBook GetByID(Long id) {
-        AddressBook ab = new AddressBook();
-        ab.setId(id);
-        AddressBook addressBook = addressBookMapper.GetByID(ab);
+        AddressBook addressBook = addressBookMapper.GetByID(id);
         return addressBook;
     }
 

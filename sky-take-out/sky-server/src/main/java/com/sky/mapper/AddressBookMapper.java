@@ -55,9 +55,9 @@ public interface AddressBookMapper {
 
     /**
      * 根据id查询地址
-     * @param ab
+     * @param id
      * @return
      */
     @Select("Select * from address_book where id = #{id}")
-    AddressBook GetByID(AddressBook ab);
+    AddressBook GetByID(Long id);
 }
