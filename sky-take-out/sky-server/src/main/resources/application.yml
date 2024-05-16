@@ -18,9 +18,20 @@ spring:
     password: ${sky.redis.password}
     database: ${sky.redis.database}
 
-mybatis:
+#mybatis:
+#  #mapper配置文件
+#  mapper-locations: classpath:mapper/*.xml
+#  #别名扫描
+#  type-aliases-package: com.sky.entity
+#  configuration:
+#    #开启驼峰命名
+#    map-underscore-to-camel-case: true
+
+#MyBatis-Plus相关配置
+mybatis-plus:
   #mapper配置文件
   mapper-locations: classpath:mapper/*.xml
+  #别名扫描
   type-aliases-package: com.sky.entity
   configuration:
     #开启驼峰命名
@@ -49,7 +60,6 @@ sky:
     # 设置前端传递过来的令牌名称
     user-token-name: authentication
 
-
 #    设置阿里云数据上传配置参数
   alioss:
     endpoint: ${sky.alioss.endpoint}
@@ -61,10 +71,14 @@ sky:
     appid: ${sky.wechat.appid}
     secret: ${sky.wechat.secret}
 #    设置微信支付
-    mchid: ${sky.wechat.mchid}
-    mch-serial-no: ${sky.wechat.mchSerialNo}
-    private-key-file-path: ${sky.wechat.privateKeyFilePath}
-    api-v3-key: ${sky.wechat.apiV3Key}
-    we-chat-pay-cert-file-path: ${sky.wechat.weChatPayCertFilePath}
-    notify-url: ${sky.wechat.notifyUrl}
-    refund-notify-url: ${sky.wechat.refundNotifyUrl}
+#    mchid: ${sky.wechat.mchid}
+#    mch-serial-no: ${sky.wechat.mchSerialNo}
+#    private-key-file-path: ${sky.wechat.privateKeyFilePath}
+#    api-v3-key: ${sky.wechat.apiV3Key}
+#    we-chat-pay-cert-file-path: ${sky.wechat.weChatPayCertFilePath}
+#    notify-url: ${sky.wechat.notifyUrl}
+#    refund-notify-url: ${sky.wechat.refundNotifyUrl}
+  shop:
+    address: ${sky.shop.address}
+  baidu:
+    ak: ${sky.baidu.ak}

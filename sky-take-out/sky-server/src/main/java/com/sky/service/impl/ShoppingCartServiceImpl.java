@@ -12,6 +12,7 @@ import com.sky.service.ShoppingCartService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -35,6 +36,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
      * 添加购物车
      * @param shoppingCartDTO
      */
+    @Transactional
     @Override
     public void addShoppingCart(ShoppingCartDTO shoppingCartDTO) {
         ShoppingCart shoppingCart = new ShoppingCart();
@@ -112,6 +114,7 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
      * 删除购物车中一个商品
      * @return
      */
+    @Transactional
     @Override
     public void subShoppingCart(ShoppingCartDTO shoppingCartDTO) {
         ShoppingCart shoppingCart = new ShoppingCart();
