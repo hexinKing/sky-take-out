@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.sky.WebSocket.WebSocketServer;
 import com.sky.constant.MessageConstant;
 import com.sky.context.BaseContext;
 import com.sky.dto.*;
@@ -57,6 +58,8 @@ public class OrderServiceImpl implements OrderService {
     private OrderDetailMapper orderDetailMapper;
     @Autowired
     private WeChatPayUtil weChatPayUtil;
+    @Autowired
+    private WebSocketServer webSocketServer;
 
 
     /**
@@ -271,6 +274,15 @@ public class OrderServiceImpl implements OrderService {
                 .build();
 
         orderMapper.update(orders);
+
+//        用户完成支付后 webSocket向管理端发送信息提醒商家
+        HashMap hashMap = new HashMap();
+        hashMap.put("type" , 1);
+        hashMap.put("orderld",ordersDB.getId());
+        hashMap.put("content","订单号："+outTradeNo);
+        String s = JSON.toJSONString(hashMap);
+        webSocketServer.sendToAllClient(s);
+
     }
 
     /**
@@ -528,6 +540,31 @@ public class OrderServiceImpl implements OrderService {
         orderStatisticsVO.setToBeConfirmed(orderMapper.statistics(Orders.TO_BE_CONFIRMED));
 
         return orderStatisticsVO;
+    }
+
+    /**
+     * 用户催单
+     * @param id
+     * @return
+     */
+    @Override
+    public void reminder(Long id) {
+        // 根据id查询订单
+        Orders ordersDB = orderMapper.getById(id);
+
+        // 校验订单是否存在，并且状态为4
+        if (ordersDB == null ) {
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+
+//        用户点击催单，用户点发送信息至后端，后端响应信息给管理端
+        HashMap hashMap = new HashMap();
+        hashMap.put("type" , 2);
+        hashMap.put("orderld",ordersDB.getId());
+        hashMap.put("content","订单号："+ordersDB.getNumber());
+        String s = JSON.toJSONString(hashMap);
+        webSocketServer.sendToAllClient(s);
+
     }
 
 

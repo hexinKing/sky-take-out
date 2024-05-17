@@ -7,6 +7,9 @@ import com.sky.vo.OrderVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
 @Mapper
 public interface OrderMapper  {
 
@@ -52,4 +55,12 @@ public interface OrderMapper  {
     @Select("select count(*) from orders where status=#{status}")
     Integer statistics(Integer status);
 
+    /**
+     * 判断当前时间减15分钟是否大于用户下单时间且订单状态为1,返回查询结果
+     * @param status
+     * @param localDateTime
+     * @return
+     */
+    @Select("select * from orders where status=#{status} and order_time<#{localDateTime}")
+    List<Orders> getStatusTime(Integer status, LocalDateTime localDateTime);
 }
