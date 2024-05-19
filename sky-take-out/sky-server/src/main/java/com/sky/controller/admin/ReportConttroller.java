@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
 
 @RequestMapping("/admin/report")
@@ -84,6 +85,17 @@ public class ReportConttroller {
             @DateTimeFormat(pattern = "yyyy-MM-dd")LocalDate end){
         SalesTop10ReportVO salesTop10ReportVO = reportService.top10(begin,end);
         return Result.success(salesTop10ReportVO);
+    }
+
+    /**
+     * 导出Excel报表接口
+     * @return
+     */
+    @GetMapping("/export")
+    @ApiOperation("导出Excel报表接口")
+    public Result export(HttpServletResponse response)  {
+        reportService.export(response);
+        return Result.success();
     }
 
 

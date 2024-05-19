@@ -9,8 +9,8 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface OrderMapper  {
@@ -71,19 +71,21 @@ public interface OrderMapper  {
      * @param hashMap
      * @return
      */
-    Double beginAndEnd(HashMap hashMap);
+    Double beginAndEnd(Map hashMap);
 
     /**
      * 获取每日订单数和有效订单数
      * @param hashMap
      * @return
      */
-    Integer ordersCount(HashMap hashMap);
+    Integer ordersCount(Map hashMap);
 
     /**
      * 获取每日销售的商品名称和销量数量
      * @param hashMap
      * @return
      */
-    List<GoodsSalesDTO> getSelectTop10(HashMap hashMap);
+    List<GoodsSalesDTO> getSelectTop10(Map hashMap);
+
+
 }
