@@ -4,6 +4,8 @@ import com.sky.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.HashMap;
+
 @Mapper
 public interface UserMapper {
 
@@ -28,4 +30,11 @@ public interface UserMapper {
      */
     @Select("Select * from user where id=#{id}")
     User getById(Long userID);
+
+    /**
+     * 获取每日的用户总量和新增用户
+     * @param hashMap
+     * @return
+     */
+    Integer totalUserAndnewUser(HashMap hashMap);
 }
